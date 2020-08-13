@@ -6,6 +6,7 @@ UNION SELECT 'SCDD','SCDD','SCDD_LSBH','SCDD_SHBZ'-- 生产订单
 UNION SELECT 'SCDDZX','SCDD','SCDD_LSBH','SCDD_SHBZ'-- 生产订单子项
 UNION SELECT 'CGDD','CGDD1','CGDD1_LSBH','CGDD1_SHBZ'-- 采购订单
 UNION SELECT 'CGDHD','CGDHD1','CGDHD1_LSBH','CGDHD1_SHBZ'-- 采购到货单
+UNION SELECT 'DBTZD','KCTZD1','KCTZD1_LSBH','KCTZD1_SHBZ'-- 调拨通知单
 -------------------------------------------------------------------------
 DECLARE @sql NVARCHAR(MAX)
 SET @sql = ''
@@ -53,8 +54,10 @@ AS
  --0:未提交;1:审批通过 
  AND KCYXZ1_PJLX ='D' -- D代表盘点单，Y是移库单
 
+
+
  -- 校验路线
- IF (object_id('trg_SUF_KCCKD1_Update', 'TR') IS NOT NULL)
+IF (object_id('trg_SUF_KCCKD1_Update', 'TR') IS NOT NULL)
 	DROP TRIGGER trg_SUF_KCCKD1_Update
 GO
 CREATE TRIGGER trg_SUF_KCCKD1_Update  
@@ -65,5 +68,7 @@ AS
  SELECT 'SCCKD',KCCKD1_LSBH,GETDATE() FROM INSERTED WHERE KCCKD1_SHBZ=0  
  --0:未提交;1:审批通过 
  AND KCCKD1_PJLX ='O' -- O是生产领料单
+
+
 
 
