@@ -53,9 +53,7 @@ AS
  SELECT 'KCPDB',KCYXZ1_LSBH,GETDATE() FROM INSERTED WHERE KCYXZ1_SHBZ=0  
  --0:未提交;1:审批通过 
  AND KCYXZ1_PJLX ='D' -- D代表盘点单，Y是移库单
-
-
-
+GO
  -- 校验路线
 IF (object_id('trg_SUF_KCCKD1_Update', 'TR') IS NOT NULL)
 	DROP TRIGGER trg_SUF_KCCKD1_Update

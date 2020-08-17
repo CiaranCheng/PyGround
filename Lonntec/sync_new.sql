@@ -55,8 +55,9 @@ UNION SELECT '0->QTCKD','其他出库单','0','QTCKD','0','1',GETDATE()
 UNION SELECT '0->PKCKD','盘亏出库单','0','PKCKD','0','1',GETDATE()
 UNION SELECT '0->KCYKD','调拨移库单','0','KCYKD','0','1',GETDATE()
 
-UNION SELECT 'SCDDZX->DBTZD','生产订单->调拨通知单','SCDDZX','DBTZD','0','1',GETDATE()
+UNION SELECT 'SCDDZX->DBTZD','生产订单子项->调拨通知单','SCDDZX','DBTZD','0','1',GETDATE()
 UNION SELECT 'DBTZD->KCYKD','调拨通知单->调拨移库单','DBTZD','KCYKD','0','1',GETDATE()
+UNION SELECT 'CGDD->CGDHD','采购订单->采购到货单','CGDD','CGDHD','0','1',GETDATE()
 -----------------------------------------------------------
 -- 业务对象清单（根据 T_SUFI_Schema_BillLinkList 的 FSourceBillKey 和 FDestBillKey 创建）
 -----------------------------------------------------------
@@ -79,7 +80,7 @@ FROM(
 	SELECT t1.FDestBillKey AS FBillKey,RIGHT(t1.FLinkTitle,CASE CHARINDEX('->',t1.FLinkTitle) WHEN 0 THEN LEN(t1.FLinkTitle) ELSE LEN(t1.FLinkTitle)-CHARINDEX('->',t1.FLinkTitle)-1 END) AS FTitle
 	FROM dbo.T_SUFI_Schema_BillLinkList t1
 ) table1
-WHERE table1.FBillKey<>'0' AND table1.FBillKey<>''
+WHERE table1.FBillKey<>'0' AND table1.FBillKey<>'' 
 
 -----------------------------------------------------------
 -- 业务路线清单，校验路线
@@ -1023,15 +1024,9 @@ UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube105',FTubeIndex=2 WHERE FBil
 UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube101',FTubeIndex=0 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD2_WLBH'
 UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube101',FTubeIndex=1 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD2_WLBHNumber'
 UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube101',FTubeIndex=2 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD2_WLBHName'
-UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube104',FTubeIndex=0 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD1_YCCK'
-UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube104',FTubeIndex=1 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD1_YCCKNumber'
-UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube104',FTubeIndex=2 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD1_YCCKName'
 UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube104',FTubeIndex=0 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD1_YRCK'
 UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube104',FTubeIndex=1 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD1_YRCKNumber'
 UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube104',FTubeIndex=2 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD1_YRCKName'
-UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube105',FTubeIndex=0 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD2_HWBH'
-UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube105',FTubeIndex=1 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD2_HWBHNumber'
-UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube105',FTubeIndex=2 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD2_HWBHName'
 UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube105',FTubeIndex=0 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD2_YRHW'
 UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube105',FTubeIndex=1 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD2_YRHWNumber'
 UPDATE dbo.T_SUFI_Schema_BillInfo SET FTubeKey='tube105',FTubeIndex=2 WHERE FBillKey='DBTZD' AND FFieldName ='KCTZD2_YRHWName'
@@ -1408,6 +1403,87 @@ UNION SELECT 'DBTZD->KCYKD','1.1','','JBJLDW','0','0'
 UNION SELECT 'DBTZD->KCYKD','1.1','','JBJLDWNumber','0','0'
 UNION SELECT 'DBTZD->KCYKD','1.1','','JBJLDWName','0','0'
 
+
+-- 采购订单->采购到货单
+-- 表头
+INSERT INTO dbo.T_SUFI_Schema_BillLinkInfo(FLinkKey,FDestPage,FDestFieldName,FSrcFieldName,FIsSelectMatch,FIsPrimary)
+SELECT 'CGDD->CGDHD','1','CGDHD1_BMBH','CGDD1_BMBH','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_BMBHNumber','CGDD1_BMBHNumber','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_BMBHName','CGDD1_BMBHName','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_ZGBH','CGDD1_ZGBH','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_ZGBHNumber','CGDD1_ZGBHNumber','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_ZGBHName','CGDD1_ZGBHName','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_DWBH','CGDD1_DDJSF','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_DWBHNumber','CGDD1_DDJSFNumber','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_DWBHName','CGDD1_DDJSFName','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_DWGC','CGDD1_DWGC','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_C1','CGDD1_C1','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_C2','CGDD1_C2','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_C3','CGDD1_C3','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_C4','CGDD1_C4','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_C5','CGDD1_C5','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_C6','CGDD1_C6','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_C7','CGDD1_C7','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_C8','CGDD1_C8','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_C9','CGDD1_C9','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_C10','CGDD1_C10','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_U1','CGDD1_U1','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_U2','CGDD1_U2','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_U3','CGDD1_U3','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_U4','CGDD1_U4','0','0'
+UNION SELECT 'CGDD->CGDHD','1','CGDHD1_U5','CGDD1_U5','0','0'
+--插入业务标识
+-- 表体
+INSERT INTO dbo.T_SUFI_Schema_BillLinkInfo(FLinkKey,FDestPage,FDestFieldName,FSrcFieldName,FIsSelectMatch,FIsPrimary)
+SELECT 'CGDD->CGDHD','1.1','CGDHD2_WLBH','CGDD2_WLBH','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_WLBHNumber','CGDD2_WLBHNumber','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_WLBHName','CGDD2_WLBHName','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_DDLS','CGDD2_DDLS','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_DDFL','CGDD2_DDFL','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_CGDDLS','CGDD2_LSBH','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_CGDDFL','CGDD2_FLH','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_CGDDBH','CGDD1_SJDH','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_JHLS','CGDD2_JHLS','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_JHFL','CGDD2_JHFL','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_SSSL','CGDD2_SL','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_PCH','CGDD2_PCH','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','GGXH','GGXH','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','JBDWSL','JBDWSL','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','JLDW','JLDW','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','JLDWNumber','JLDWNumber','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','JLDWName','JLDWName','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','','JBJLDW','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','','JBJLDWNumber','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','','JBJLDWName','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','_id_','ID','0','1'
+UNION SELECT 'CGDD->CGDHD','1.1','_entryId_','EntryID','0','1'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_ZYX1','CGDD2_ZYX1','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_ZYX2','CGDD2_ZYX2','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_ZYX3','CGDD2_ZYX3','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_ZYX4','CGDD2_ZYX4','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_ZYX5','CGDD2_ZYX5','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_C1','CGDD2_C1','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_C2','CGDD2_C2','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_C3','CGDD2_C3','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_C4','CGDD2_C4','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_C5','CGDD2_C5','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_C6','CGDD2_C6','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_C7','CGDD2_C7','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_C8','CGDD2_C8','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_C9','CGDD2_C9','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_C10','CGDD2_C10','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_U1','CGDD2_U1','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_U2','CGDD2_U2','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_U3','CGDD2_U3','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_U4','CGDD2_U4','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_U5','CGDD2_U5','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_DJ','CGDD2_DJ','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_JE','CGDD2_BBJE','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_SL','CGDD2_JXSL','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_SE','CGDD2_BBSE','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_HSDJ','CGDD2_HSDJ','0','0'
+UNION SELECT 'CGDD->CGDHD','1.1','CGDHD2_HSJE','CGDD2_BBHSJE','0','0'
+
 -----------------------------------------------------------
 -- 业务路线搜索条件
 -----------------------------------------------------------
@@ -1446,6 +1522,17 @@ UNION SELECT 'DBTZD->KCYKD','KCTZD1_DJRQ','制单日期',103,3,0
 -----------------------------------------------------------
 -- 字段显示名称与系统一致
 -----------------------------------------------------------
+
+
+UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '单位编号' WHERE  FBillKey = 'DBTZD' AND FFieldName = 'KCTZD1_DWBH'
+UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '单位名称' WHERE  FBillKey = 'DBTZD' AND FFieldName = 'KCTZD1_DWBHName'
+UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '单位编号' WHERE  FBillKey = 'DBTZD' AND FFieldName = 'KCTZD1_DWBHNumber'
+UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '单位名称' WHERE  FBillKey = 'DBTZD' AND FFieldName = 'KCTZD1_DWMC'
+UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '红单标志' WHERE  FBillKey = 'DBTZD' AND FFieldName = 'KCTZD1_HDBZ'
+UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '移出仓库' WHERE  FBillKey = 'DBTZD' AND FFieldName = 'KCTZD1_YCCKName'
+UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '移出仓库编号' WHERE  FBillKey = 'DBTZD' AND FFieldName = 'KCTZD1_YCCKNumber'
+UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '移入仓库' WHERE  FBillKey = 'DBTZD' AND FFieldName = 'KCTZD1_YRCKName'
+UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '移入仓库编号' WHERE  FBillKey = 'DBTZD' AND FFieldName = 'KCTZD1_YRCKNumber'
 UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '移出仓库' WHERE  FBillKey = 'KCYKD' AND FFieldName = 'KCYXZ1_YCCKName'
 UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '移出仓库编号' WHERE  FBillKey = 'KCYKD' AND FFieldName = 'KCYXZ1_YCCKNumber'
 UPDATE  T_SUFI_Schema_Billinfo SET FFieldTitle = '移入仓库' WHERE  FBillKey = 'KCYKD' AND FFieldName = 'KCYXZ1_YRCKName'
